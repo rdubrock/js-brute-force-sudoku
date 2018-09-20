@@ -1,6 +1,6 @@
 {
   "name": "js-brute-force-sudoku",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A miserable approach to solving a sudoku",
   "main": "index.js",
   "scripts": {
