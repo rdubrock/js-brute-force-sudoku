@@ -131,14 +131,14 @@ const getBlockByIndex = (index) => {
 
 const checkRow = (square, index, grid) => {
   let indices = getRowByIndex(index);
-  for (i = indices[0]; i <= indices[1]; i++) {
+  for (let i = indices[0]; i <= indices[1]; i++) {
     trimPossibles(grid[i].value, square);
   }
 }
 
 const checkColumn = (square, index, grid) => {
   let start = index % 9;
-  for (i = start; i < grid.length; i = i + 9) {
+  for (let i = start; i < grid.length; i = i + 9) {
     trimPossibles(grid[i].value, square);
   }
 }
