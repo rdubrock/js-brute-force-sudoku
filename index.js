@@ -1,5 +1,8 @@
 class Square {
   constructor(value, possibles = [1, 2, 3, 4, 5, 6, 7, 8, 9]) {
+    if (value) {
+      possibles = [];
+    }
     this.possibles = possibles;
     this.value = value;
   }
@@ -17,23 +20,26 @@ const solveString = (inputString) => {
       }
     });
 
-    return solvePuzzle(grid);
+  return solvePuzzle(grid);
 }
 
 const solvePuzzle = (grid) => {
   const guesses = [];
-  let currentPuzzleState = 'inProgress';
+  let guessCount = 0;
   let currentPuzzle = grid;
   while (true) {
-    currentPuzzleState = puzzleLoop(currentPuzzle);
+    puzzleLoop(currentPuzzle);
+    let currentPuzzleState = checkPuzzleStatus(currentPuzzle);
     if (currentPuzzleState === 'solved') {
       break;
     }
     if (currentPuzzleState === 'needsGuess') {
       applyGuesses(currentPuzzle, guesses);
       currentPuzzle = guesses.pop();
+      guessCount++;
     } else if (currentPuzzleState = 'invalid') {
       currentPuzzle = guesses.pop();
+      guessCount++;
     }
   }
   return currentPuzzle.map((square) => square.value).join('');
@@ -41,27 +47,20 @@ const solvePuzzle = (grid) => {
 
 const puzzleLoop = (grid) => {
   grid.forEach((square, index) => {
-    console.log('checking square', index);
     checkRow(square, index, grid);
-    console.log('checked row', index);
     checkColumn(square, index, grid);
-    console.log('checked column', index);
     checkBlock(square, index, grid);
-    console.log('checked block', index);
   });
   let valuesApplied = applyValues(grid);
-  console.log('values applied');
   if (valuesApplied) {
-    return puzzleLoop(grid);
-  } else {
-    return checkPuzzleStatus(grid);
+    puzzleLoop(grid);
   }
 }
 
 const applyValues = grid => {
   let valuesApplied = false;
   grid.forEach((square) => {
-    if(!square.value && square.possibles.length === 1) {
+    if (!valuesApplied && !square.value && square.possibles.length === 1) {
       square.value = square.possibles.pop();
       valuesApplied = true;
     }
@@ -101,31 +100,31 @@ const getRowByIndex = (index) => {
 const getBlockByIndex = (index) => {
   let row = Math.floor(index / 9);
   let column = index % 9;
-  if(row < 3 && column < 3) {
+  if (row < 3 && column < 3) {
     return [0, 1, 2, 9, 10, 11, 18, 19, 20];
   }
-  if(row < 3 && column < 6) {
-    return [ 3, 4, 5, 12, 13, 14, 21, 22, 23];
+  if (row < 3 && column < 6) {
+    return [3, 4, 5, 12, 13, 14, 21, 22, 23];
   }
-  if(row < 3 && column < 9) {
+  if (row < 3 && column < 9) {
     return [6, 7, 8, 15, 16, 17, 24, 25, 26];
   }
-  if(row < 6 && column < 3) {
+  if (row < 6 && column < 3) {
     return [27, 28, 29, 36, 37, 38, 45, 46, 47];
-  } 
-  if(row < 6 && column < 6) {
+  }
+  if (row < 6 && column < 6) {
     return [30, 31, 32, 39, 40, 41, 48, 49, 50];
   }
-  if(row < 6 && column < 9) {
+  if (row < 6 && column < 9) {
     return [33, 34, 35, 42, 43, 44, 51, 52, 53];
   }
-  if(row < 9 && column < 3) {
+  if (row < 9 && column < 3) {
     return [54, 55, 56, 63, 64, 65, 72, 73, 74];
   }
-  if(row < 9 && column < 6) {
+  if (row < 9 && column < 6) {
     return [57, 58, 59, 66, 67, 68, 75, 76, 77];
   }
-  if(row < 9 && column < 9) {
+  if (row < 9 && column < 9) {
     return [60, 61, 62, 69, 70, 71, 78, 79, 80];
   }
 }
@@ -158,12 +157,12 @@ const checkPuzzleStatus = (grid) => {
   grid.forEach((square) => {
     if (square.possibles.length === 0 && !square.value) {
       invalid = true;
-    } 
+    }
     if (!square.value && square.possibles.length === 1) {
       solved = false;
       needsGuess = false;
     }
-    if (!square.value)  {
+    if (!square.value) {
       solved = false;
     }
   });
@@ -183,9 +182,7 @@ const applyGuesses = (grid, guesses) => {
   let minGuesses = 9
   let minGuessesIndex;
   grid.forEach((square, index) => {
-    console.log('square.possibles', square.possibles.length);
-    if (square.possibles.length < minGuesses) {
-      console.log('found min guesses', index);
+    if (!square.value && square.possibles.length < minGuesses) {
       minGuesses = square.possibles.length;
       minGuessesIndex = index;
     }
@@ -200,15 +197,31 @@ const applyGuesses = (grid, guesses) => {
         return new Square(square.value, square.possibles);
       }
     });
+    printPartialBoard(guessGrid);
     guesses.push(guessGrid);
   });
 }
 
-let testString = ".389...5775..84.1...65.748..6..9574.519.43..8.7.6..3.5941.3.5..3.54..1.9...159.34";
-
-try {
-  let solution = solveString(testString);
-  console.log('solved', solution);
-} catch (e) {
-  console.error(e);
+const printPartialBoard = arr => {
+  let board = '';
+  let divider = '  -  -  -  -  -  -  -  -  -  ';
+  arr.forEach((square, index) => {
+    if (index % 9 === 0) {
+      board = board.concat(' |', '\n', divider, '\n');
+    }
+    board = board.concat('| ', square.value || '.');
+  });
 }
+
+const printBoard = (string) => {
+  let board = '';
+  let divider = '  -  -  -  -  -  -  -  -  -  ';
+  string.split('').forEach((char, index) => {
+    if (index % 9 === 0) {
+      board = board.concat(' |', '\n', divider, '\n');
+    }
+    board = board.concat('| ', char);
+  });
+}
+
+export default solveString;
