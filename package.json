@@ -1,0 +1,19 @@
+{
+  "name": "js-brute-force-sudoku",
+  "version": "1.0.0",
+  "description": "A miserable approach to solving a sudoku",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rdubrock/js-brute-force-sudoku.git"
+  },
+  "author": "Russ DuBrock",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rdubrock/js-brute-force-sudoku/issues"
+  },
+  "homepage": "https://github.com/rdubrock/js-brute-force-sudoku#readme"
+}
